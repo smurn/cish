@@ -32,6 +32,7 @@ import os.path
 import shutil
 import tempfile
 import subprocess
+import json
 
 from cish import pyenv
 
@@ -124,6 +125,19 @@ class TestPyEnv(unittest.TestCase):
         env.virtualenv(self.get_path("myenv"))
         
         self.assertFalse(os.path.exists(self.get_path("myenv/helloworld")))
+
+    def test_config(self):
+        """
+        Test if we can load an environment from a configuration file.
+        """
+        self.create_files(["python.exe"])
+
+        cfgfile = self.get_path("config.json")
+        with open(cfgfile, 'w') as f:
+            json.dump({"abc": self.get_path("python.exe")}, f)
+
+        envs = pyenv.pyenvs_from_config(cfgfile)
+        self.assertEqual(self.get_path("python.exe"), envs["abc"].find_executable("python"))
  
     def get_path(self, path):
         """

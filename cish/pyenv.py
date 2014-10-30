@@ -31,6 +31,7 @@ import os.path
 import sys
 import shutil
 import subprocess
+import json
 
 class PyEnv(object):
     """
@@ -126,6 +127,51 @@ def interpeter_pyenv():
     if not sys.executable:
         raise ValueError("Interpeter that runs this script cannot be identified.")
     return pyenv_from_interpreter(sys.executable)
+
+
+def pyenvs_from_config(*search_paths):
+    """
+    Reads a json file with a `{name:"path/to/python", ...}` content and
+    returns a `dict` with the names and :class:`PyEnv` instances for each
+    entry.
+
+    By default it searches in the following locations (in that order):
+
+    * ./cish.json
+    * ${HOME}/cish.json  (or its windows equivalent)
+    * /etc/cish.json (linux, osx)
+    * C:\cish.json (windows)
+
+    Additional paths can be given as arguments and are searched before
+    falling back to the default paths.
+    """
+
+    filename = "cish.json"
+
+    paths = list(search_paths)
+    paths.append(os.path.abspath(filename))
+    paths.append(os.path.join(os.path.expanduser("~"), filename))
+    if os.name == "nt":
+        paths.append("C:\\" + filename)
+    else:
+        paths.append(os.path.sep + os.path.join("etc", filename))
+
+    for path in paths:
+        if os.path.exists(path):
+            config_file = path
+            break
+    else:
+        raise ValueError("Unable to locate configuration file. Searched in {paths}".format(
+            paths = ", ".join(paths)))
+
+    with open(config_file, 'r') as f:
+        config = json.load(f)
+
+    if not hasattr(config, "iteritems"):
+        raise ValueError("Invalid config file {f}. Must contain a key-value dict " + 
+            "as the top level element.".format(f=config_file))
+
+    return {name: pyenv_from_interpreter(exe) for name, exe in config.iteritems()}
 
 
 def pyenv_from_interpreter(exe):
