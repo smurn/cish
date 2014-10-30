@@ -86,7 +86,14 @@ class TestPyEnv(unittest.TestCase):
                            "pip.exe"])
         env = pyenv.pyenv_from_interpreter(self.get_path("python.exe"))
         self.assertEqual(env.find_executable("pip"), self.get_path("pip.exe"))
-        
+       
+    def test_getattr(self):
+        """
+        Test if we can invoke the python interpreter using a method on the environment.
+        """
+        env = pyenv.interpeter_pyenv() 
+        env.python("-c", "pass")
+ 
     def get_path(self, path):
         """
         Returns the absolute path to a file relative to the temporary directory.

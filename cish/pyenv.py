@@ -29,6 +29,7 @@
 
 import os.path
 import sys
+import subprocess
 
 class PyEnv(object):
     """
@@ -45,6 +46,19 @@ class PyEnv(object):
         self.search_paths = search_paths
         self.exec_patterns = ['{name}' ,'{name}.exe']
         self.python_patterns = ['{name}', 'w{name}.exe' ,'{name}.exe']
+
+
+    def __getattr__(self, name):
+        """
+        Returns a method that invokes an exectuable in this environment.
+        Arguments passed to the method become console line arguments.
+        """
+        executable = self.find_executable(name)
+        
+        def invoker(*args):
+            subprocess.check_call([executable] + list(args))
+        return invoker
+
 
     def find_executable(self, name):
         """
