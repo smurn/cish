@@ -108,7 +108,7 @@ class TestPyEnv(unittest.TestCase):
         files = [f.replace("/", os.sep) for f in files]
         
         for relative_file in files:
-            relative_file = relative_file.replace("/", os.pathsep)
+            relative_file = relative_file.replace("/", os.sep)
             relative_path, filename = os.path.split(relative_file)
             absolute_path = os.path.join(self.tmpdir, relative_path)
             if not os.path.exists(absolute_path):
