@@ -55,7 +55,7 @@ class TestPyEnv(unittest.TestCase):
         self.create_files(["bin/python",
                            "bin/pip",
                            "bin/virtualenv"])
-        env = pyenv.pyenv_from_interpreter(self.get_path("bin/python"))
+        env = pyenv.from_interpreter(self.get_path("bin/python"))
         self.assertEqual(env.find_executable("pip"), self.get_path("bin/pip"))
         
     def test_windows_style(self):
@@ -65,7 +65,7 @@ class TestPyEnv(unittest.TestCase):
         self.create_files(["python.exe",
                            "Scripts/pip",
                            "Scripts/virtualenv"])
-        env = pyenv.pyenv_from_interpreter(self.get_path("python.exe"))
+        env = pyenv.from_interpreter(self.get_path("python.exe"))
         self.assertEqual(env.find_executable("pip"), self.get_path("Scripts/pip"))
         
     def test_prefer_wpython(self):
@@ -74,7 +74,7 @@ class TestPyEnv(unittest.TestCase):
         """
         self.create_files(["python.exe",
                            "wpython.exe"])
-        env = pyenv.pyenv_from_interpreter(self.get_path("python.exe"))
+        env = pyenv.from_interpreter(self.get_path("python.exe"))
         self.assertEqual(env.find_executable("python"), self.get_path("wpython.exe"))
         
     def test_w_prefix_only_for_python(self):
@@ -86,7 +86,7 @@ class TestPyEnv(unittest.TestCase):
         self.create_files(["python.exe",
                            "wpip.exe",
                            "pip.exe"])
-        env = pyenv.pyenv_from_interpreter(self.get_path("python.exe"))
+        env = pyenv.from_interpreter(self.get_path("python.exe"))
         self.assertEqual(env.find_executable("pip"), self.get_path("pip.exe"))
        
     def test_getattr(self):
@@ -136,7 +136,7 @@ class TestPyEnv(unittest.TestCase):
         with open(cfgfile, 'w') as f:
             json.dump({"abc": self.get_path("python.exe")}, f)
 
-        envs = pyenv.pyenvs_from_config(cfgfile)
+        envs = pyenv.from_config(cfgfile)
         self.assertEqual(self.get_path("python.exe"), envs["abc"].find_executable("python"))
  
     def get_path(self, path):

@@ -91,7 +91,7 @@ class PyEnv(object):
             args = [virtualenv, os.path.basename(abspath)]
             subprocess.check_call(args)
 
-            return pyenv_from_virtualenv(abspath)
+            return from_virtualenv(abspath)
 
         finally:
             os.chdir(currentdir)
@@ -126,10 +126,10 @@ def interpeter_pyenv():
     """
     if not sys.executable:
         raise ValueError("Interpeter that runs this script cannot be identified.")
-    return pyenv_from_interpreter(sys.executable)
+    return from_interpreter(sys.executable)
 
 
-def pyenvs_from_config(*search_paths):
+def from_config(*search_paths):
     """
     Reads a json file with a `{name:"path/to/python", ...}` content and
     returns a `dict` with the names and :class:`PyEnv` instances for each
@@ -171,10 +171,10 @@ def pyenvs_from_config(*search_paths):
         raise ValueError("Invalid config file {f}. Must contain a key-value dict " + 
             "as the top level element.".format(f=config_file))
 
-    return {name: pyenv_from_interpreter(exe) for name, exe in config.iteritems()}
+    return {name: from_interpreter(exe) for name, exe in config.iteritems()}
 
 
-def pyenv_from_interpreter(exe):
+def from_interpreter(exe):
     """
     Attempts to construct the environment for a given python interpeter by guessing
     where the paths are relative to it.
@@ -188,10 +188,10 @@ def pyenv_from_interpreter(exe):
         raise ValueError("Python interpreter {exe} does not exist here {exeabs}.".format(exe=exe, exeabs=exeabs))
     
     path = os.path.dirname(exeabs)
-    return _pyenv_from_paths(path, ["Scripts", "scripts"])
+    return _from_paths(path, ["Scripts", "scripts"])
 
 
-def pyenv_from_virtualenv(path):
+def from_virtualenv(path):
     """
     Attempts to construct the environment from the directory created by `virtualenv`.
     
@@ -199,10 +199,10 @@ def pyenv_from_virtualenv(path):
 
     :returns: Instance of :class:`PyEnv`
     """
-    return _pyenv_from_paths(path, ["bin"])    
+    return _from_paths(path, ["bin"])    
 
 
-def _pyenv_from_paths(path, subdirs):
+def _from_paths(path, subdirs):
     """
     Helper method to construct an environment.
 
