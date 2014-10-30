@@ -31,6 +31,7 @@ import unittest
 import os.path
 import shutil
 import tempfile
+import subprocess
 
 from cish import pyenv
 
@@ -93,6 +94,36 @@ class TestPyEnv(unittest.TestCase):
         """
         env = pyenv.interpeter_pyenv() 
         env.python("-c", "pass")
+
+    def test_virtualenv_abs(self):
+        """
+        Tests if we can create a virtual environment giving an absolute path.
+        """
+        env = pyenv.interpeter_pyenv()
+        venv = env.virtualenv(self.get_path("myenv"))
+        self.assertTrue(venv.find_executable("python").startswith(self.tmpdir))
+
+    def test_virtualenv_relative(self):
+        """
+        Tests if we can create a virtual environment giving a relative path.
+        """
+        os.chdir(self.tmpdir)
+        env = pyenv.interpeter_pyenv()
+        venv = env.virtualenv("myenv")
+        self.assertTrue(venv.find_executable("python").startswith(self.tmpdir))
+
+    def test_virtualenv_overwrites(self):
+        """
+        Tests if a virtual env is replacing an existing virtual env.
+        """
+        env = pyenv.interpeter_pyenv()
+        env.virtualenv(self.get_path("myenv"))
+        with open(self.get_path("myenv/helloworld"), 'w') as f:
+            f.write("content")
+        
+        env.virtualenv(self.get_path("myenv"))
+        
+        self.assertFalse(os.path.exists(self.get_path("myenv/helloworld")))
  
     def get_path(self, path):
         """

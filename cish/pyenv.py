@@ -29,6 +29,7 @@
 
 import os.path
 import sys
+import shutil
 import subprocess
 
 class PyEnv(object):
@@ -60,6 +61,41 @@ class PyEnv(object):
         return invoker
 
 
+    def virtualenv(self, path="env"):
+        """
+        Creates a new virtual environment and returns the PyEnv for it.
+        
+        :param path: Location of the virtual environment. Can be an
+            absolute path or a path relative to the current directory.
+            Defaults to `"env"`.
+
+        :returns: PyEnv instance for the new environment.
+        """
+        abspath = os.path.abspath(path)
+        
+        if os.path.isdir(abspath):
+            shutil.rmtree(abspath)
+        elif os.path.exists(abspath):
+            os.remove(abspath)
+        
+        parent = os.path.dirname(abspath)
+        if not os.path.exists(parent):
+            os.makedirs(parent)
+        
+        currentdir = os.getcwd()
+        try:
+            os.chdir(parent)
+            
+            virtualenv = self.find_executable("virtualenv")
+            args = [virtualenv, os.path.basename(abspath)]
+            subprocess.check_call(args)
+
+            return pyenv_from_virtualenv(abspath)
+
+        finally:
+            os.chdir(currentdir)
+
+
     def find_executable(self, name):
         """
         Finds an executable with the given name in this enviroment.
@@ -82,7 +118,6 @@ class PyEnv(object):
             candidates=", ".join(candidates)
         ))
         
-
 
 def interpeter_pyenv():
     """
@@ -140,6 +175,4 @@ def _pyenv_from_paths(path, subdirs):
         raise ValueError("Python environment not found. None of the directories exists {dirs}".format(
             dirs=", ".join(paths)))
     return PyEnv(search_paths)
-
-
 
