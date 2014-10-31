@@ -37,9 +37,11 @@ from cish import commands
 class TestCommands(unittest.TestCase):
 
     def setUp(self):
+        self.cwd = os.getcwd()
         self.tmpdir = tempfile.mkdtemp()
 
     def tearDown(self):
+        os.chdir(self.cwd)
         shutil.rmtree(self.tmpdir)
 
     def test_mkdirs(self):
@@ -102,6 +104,60 @@ class TestCommands(unittest.TestCase):
         """
         commands.rm(self.get_path("mydir"))
         self.assertFalse(os.path.exists(self.get_path("mydir")))
+
+    def test_pwd(self):
+        """
+        Tests pwd.
+        """
+        os.chdir(self.tmpdir)
+        self.assertEqual(commands.pwd(), self.tmpdir)
+
+    def test_cd_abs(self):
+        """
+        Test cd with an absolute path.
+        """
+        self.create_files(["mydir/myfile",
+                           "mydir/subdir/anotherfile"])
+        commands.cd(self.get_path("mydir/subdir"))
+        self.assertTrue(os.getcwd(), self.get_path("mydir/subdir"))
+
+    def test_cd_relative(self):
+        """
+        Test cd with a relative path.
+        """
+        self.create_files(["mydir/myfile",
+                           "mydir/subdir/anotherfile"])
+        os.chdir(self.get_path("mydir"))
+        commands.cd("subdir")
+        self.assertTrue(os.getcwd(), self.get_path("mydir/subdir"))
+
+    def test_cd_with(self):
+        """
+        Test that the path is reset after the `with` statement.
+        """
+        self.create_files(["mydir/myfile",
+                           "mydir/subdir/anotherfile"])
+        os.chdir(self.get_path("mydir"))
+ 
+        with commands.cd("subdir") as path:
+            self.assertTrue(os.getcwd(), self.get_path("mydir/subdir"))
+            self.assertTrue(path, self.get_path("mydir/subdir")) 
+        self.assertTrue(os.getcwd(), self.get_path("mydir"))
+
+    def test_cd_with_recursive(self):
+        """
+        Test that the path is reset after nested `with` statements.
+        """
+        self.create_files(["mydir/myfile",
+                           "mydir/subdir/anotherfile",
+                           "mydir/subdir/subsubdir/afile"])
+        os.chdir(self.get_path("mydir"))
+
+        with commands.cd("subdir"):
+            with commands.cd("subsubdir"): 
+                self.assertTrue(os.getcwd(), self.get_path("mydir/subdir/subsubdir"))
+            self.assertTrue(os.getcwd(), self.get_path("mydir/subdir"))
+        self.assertTrue(os.getcwd(), self.get_path("mydir"))
 
     def get_path(self, path):
         """

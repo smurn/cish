@@ -31,6 +31,5 @@
 from cish.pyenv import from_config
 from cish.pyenv import from_interpreter
 from cish.pyenv import from_virtualenv
-from cish.commands import mkdirs
-from cish.commands import rm
+from cish.commands import pwd, cd, mkdirs, rm
 
