@@ -34,7 +34,7 @@ from cish.pyenv import from_interpreter
 from cish.pyenv import from_virtualenv
 from cish.commands import pwd, cd, mkdirs, rm
 
-default =interpeter_pyenv()
+default = interpeter_pyenv()
 del interpeter_pyenv
 
 
