@@ -42,9 +42,11 @@ class TestPyEnv(unittest.TestCase):
     """
 
     def setUp(self):
+        self.cwd = os.getcwd()
         self.tmpdir = tempfile.mkdtemp()
     
     def tearDown(self):
+        os.chdir(self.cwd)
         shutil.rmtree(self.tmpdir)
 
     def test_linux_style(self):

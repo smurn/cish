@@ -199,7 +199,7 @@ def from_virtualenv(path):
 
     :returns: Instance of :class:`PyEnv`
     """
-    return _from_paths(path, ["bin"])    
+    return _from_paths(path, ["bin", "Scripts", "scripts"])    
 
 
 def _from_paths(path, subdirs):
