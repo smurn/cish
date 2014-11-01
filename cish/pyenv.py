@@ -171,7 +171,7 @@ def from_config(*search_paths):
         raise ValueError("Invalid config file {f}. Must contain a key-value dict " + 
             "as the top level element.".format(f=config_file))
 
-    return {name: from_interpreter(exe) for name, exe in config.iteritems()}
+    return dict((name, from_interpreter(exe)) for name, exe in config.iteritems())
 
 
 def from_interpreter(exe):
