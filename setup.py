@@ -30,9 +30,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from setuptools import setup
+import os.path
 
-with open('README.rst') as f:
-    long_description = f.read()
+if os.path.exists('README.rst'):
+    with open('README.rst') as f:
+        long_description = f.read()
+else:
+    long_description = ""
 
 setup(name='cish',
       version='0.1.1',
