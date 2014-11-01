@@ -39,7 +39,7 @@ else:
     long_description = ""
 
 setup(name='cish',
-      version='0.1.1',
+      version='0.1.2',
       description='Write shell-like python scripts to control continuous builds.',
       long_description=long_description,
       author='Stefan C. Mueller',
