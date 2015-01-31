@@ -96,7 +96,10 @@ class PyEnv(object):
                 args.append("--system-site-packages")
             subprocess.check_call(args)
 
-            return from_virtualenv(abspath)
+            venv = from_virtualenv(abspath)
+            if system_side_packages:
+                venv.search_paths.extend(self.search_paths)
+            return venv
 
         finally:
             os.chdir(currentdir)
