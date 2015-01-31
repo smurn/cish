@@ -62,13 +62,16 @@ class PyEnv(object):
         return invoker
 
 
-    def virtualenv(self, path="env"):
+    def virtualenv(self, path="env", system_side_packages=False):
         """
         Creates a new virtual environment and returns the PyEnv for it.
         
         :param path: Location of the virtual environment. Can be an
             absolute path or a path relative to the current directory.
             Defaults to `"env"`.
+            
+        :param system_side_packages: Should the venv see the packages
+            of the main environment?
 
         :returns: PyEnv instance for the new environment.
         """
@@ -89,6 +92,8 @@ class PyEnv(object):
             
             virtualenv = self.find_executable("virtualenv")
             args = [virtualenv, os.path.basename(abspath)]
+            if system_side_packages:
+                args.append("--system-site-packages")
             subprocess.check_call(args)
 
             return from_virtualenv(abspath)
