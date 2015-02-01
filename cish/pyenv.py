@@ -116,7 +116,7 @@ class PyEnv(object):
         
         patterns = self.python_patterns if name == "python" else self.exec_patterns
         candidate_names = [ext.format(name=name) for ext in patterns]
-        candidates = [os.path.join(path, name) for path in self.search_paths for name in candidate_names]
+        candidates = [os.path.join(path, n) for path in self.search_paths for n in candidate_names]
    
         for candidate in candidates:
             if os.path.exists(candidate):
