@@ -113,7 +113,12 @@ class TestPyEnv(unittest.TestCase):
         os.chdir(self.tmpdir)
         env = pyenv.interpeter_pyenv()
         venv = env.virtualenv("myenv")
-        self.assertTrue(venv.find_executable("python").startswith(self.tmpdir))
+        
+        actual = os.path.realpath(venv.find_executable("python"))
+        expected = os.path.realpath(self.tmpdir)
+        
+        self.assertTrue(actual.startswith(expected), 
+                        "Expected %s to start with %s" %(actual, expected))
 
     def test_virtualenv_overwrites(self):
         """

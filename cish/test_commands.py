@@ -110,7 +110,7 @@ class TestCommands(unittest.TestCase):
         Tests pwd.
         """
         os.chdir(self.tmpdir)
-        self.assertEqual(commands.pwd(), self.tmpdir)
+        self.assertEqual(os.path.realpath(commands.pwd()), os.path.realpath(self.tmpdir))
 
     def test_cd_abs(self):
         """
