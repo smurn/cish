@@ -46,4 +46,5 @@ setup(name='cish',
       author_email='scm@smurn.org',
       url='https://github.com/smurn/cish',
       packages=['cish'],
+      install_requires = ['virtualenv'],
      )
